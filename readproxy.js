@@ -40,18 +40,13 @@ new get(url).asString(function (err, str) {
       
     fs.writeFile(tmpfile, content);
 
-    var copy = spawn('scp', [tmpfile, filename]);
+    spawn('scp', [tmpfile, filename]).on('exit', function (code) {
 
-    copy.stderr.on('data', function (data) {
-      console.error("Error: could not write remote file!");
-      console.log(data.asciiSlice(0, data.length));
-
-      fs.unlink(tmpfile);
-      return 1;
-    });
-
-    copy.on('exit', function (code) {
-      console.log("written to " + filename);
+      if (code == 0) {
+	console.log("written to " + filename);
+      } else {
+	console.error("Error: could not write file!");
+      }
 
       fs.unlink(tmpfile);      
     });
