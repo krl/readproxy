@@ -1,0 +1,14 @@
+* what?
+Simple node.js program to take urls, run them through readability, and save the content as html mail in pseudo mbox format suitable for notmuch indexing.
+* why?
+To index and share weblinks over for example http://github.com/albins/notmuch-to-feed or just for future searchability.
+* dependencies
+** unix system with scp
+** node-get
+https://github.com/tmcw/node-get
+** readability (for node)
+https://github.com/arrix/node-readability
+* usage
+readproxy directory url
+
+directory designates where to save the file, using scp (so that host:path/etc works as well).
