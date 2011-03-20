@@ -9,7 +9,7 @@ var fs          = require('fs'),
 try {
   var directory = process.argv[2];
   var url  = process.argv[3];
-  var host = url.split("/")[3];
+  var host = url.split("/")[2];
 
   assert.ok(directory);
   assert.ok(url);
