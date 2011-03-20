@@ -19,6 +19,10 @@ try {
   return 1;
 }
 
+if (directory[directory.length -1] != "/") {
+  directory += "/";
+}
+
 new get(url).asString(function (err, str) {
   readability.parse(str, url, function(result) {
 
