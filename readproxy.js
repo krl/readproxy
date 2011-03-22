@@ -23,7 +23,13 @@ if (directory[directory.length -1] != "/") {
   directory += "/";
 }
 
-new get(url).asString(function (err, str) {
+var get_me = {uri: url,
+              headers: { 'Accept-encoding': 'none',
+                          'Connection': 'close',
+                          'User-Agent': 'Readproxy/0.1'}};
+
+
+new get(get_me).asString(function (err, str) {
   readability.parse(str, url, function(result) {
 
     var header = 'Content-Type: text/html; charset="us-ascii"\n' +
