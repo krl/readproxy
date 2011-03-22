@@ -34,21 +34,28 @@ new get(url).asString(function (err, str) {
       "Date: "        + (new Date).toUTCString() + "\n" +
       "X-Entry-URL: " + url + "\n\n";
 
-    var tmpfile  = "/tmp/readproxy_" + Math.random();
     var filename = directory + url.replace(/\//g, "!");
     var content  = header + result.content;    
-      
-    fs.writeFile(tmpfile, content);
+    
+    if (directory.indexOf(":") == -1) {
+      // It's not a scp link -- write directly.
+      fs.writeFile(filename, content);
+      console.log("Witten to " + filename + " directly.")
+    } else {
+      // Use scp.
+      var tmpfile  = "/tmp/readproxy_" + Math.random();
 
-    spawn('scp', [tmpfile, filename]).on('exit', function (code) {
+      fs.writeFile(tmpfile, content);
+      spawn('scp', [tmpfile, filename]).on('exit', function (code) {
 
-      if (code == 0) {
-	console.log("written to " + filename);
-      } else {
-	console.error("Error: could not write file!");
-      }
+        if (code == 0) {
+	  console.log("written (using scp) to " + filename + ".");
+        } else {
+	  console.error("Error: could not write file!");
+        }
 
-      fs.unlink(tmpfile);      
-    });
+        fs.unlink(tmpfile);      
+      });
+    }
   });
 });
