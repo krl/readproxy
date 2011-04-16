@@ -65,10 +65,11 @@ new get(get_me).asString(function (err, str) {
       "X-Entry-URL: " + url + "\n\n";
 
     var filename = directory + url.replace(/\//g, "!");
-    var content  = header + result.content;    
+
+    var content  = header + result.content;
     
     if (!directory) {
-      oldlog(content)
+      oldlog(result.content) // output without headers
     }
     else if (directory.indexOf(":") == -1) {
       // It's not a scp link -- write directly.
