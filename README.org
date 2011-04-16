@@ -7,6 +7,9 @@ To index and share weblinks over for example http://github.com/albins/notmuch-to
 - [[https://github.com/tmcw/node-get][node-get]]
 - [[https://github.com/arrix/node-readability][readability]]
 * usage
+readproxy url
+ - writes to stdout
 readproxy directory url
+ - writes to directory
 
 directory designates where to save the file, using scp (so that host:path/etc works as well).
