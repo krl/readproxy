@@ -6,7 +6,7 @@ var fs     = require('fs'),
     get    = require('node-get'),
     spawn  = require('child_process').spawn;
 
-var directory, url, host
+var directory, url
 
 try {
   if (process.argv.length == 3) {
@@ -17,20 +17,16 @@ try {
     util.log = function () {}
 
     url  = process.argv[2];
-    host = url.split("/")[2];    
   } 
   else if (process.argv.length == 4) {
     directory = process.argv[2];
     url  = process.argv[3];
-    host = url.split("/")[2];
     assert.ok(directory);
-
   } else {
     assert.ok(false);
   }
 
   assert.ok(url);
-  assert.ok(host);
 } catch (err) {
   console.log("usage:");
   console.log("readproxy url");
@@ -42,30 +38,29 @@ try {
 
 var readability = require('readability')
 
-
 if (directory && directory[directory.length -1] != "/") {
   directory += "/";
 }
 
 var get_me = {uri: url,
               headers: { 'Accept-encoding': 'none',
-                          'Connection': 'close',
-                          'User-Agent': 'Readproxy/0.1'}};
+                         'Connection': 'close',
+                         'User-Agent': 'Readproxy/0.1'}};
 
-new get(get_me).asString(function (err, str) {
+handle = new get(get_me);
+
+handle.asString(function (err, str) {
   readability.parse(str, url, function(result) {
 
     var header = 'Content-Type: text/html; charset="us-ascii"\n' +
       "MIME-Version: 1.0\n" +
       "Content-Transfer-Encoding: 8bit\n" +
       "Subject: "     + result.title + "\n" +
-      "From: "        + host + " <readproxy@localhost>\n" +
+      "From: "        + handle.uri_o.host + " <readproxy@localhost>\n" +
       "Date: "        + (new Date).toUTCString() + "\n" +
-      "Message-ID: "  + url + "\n" +
-      "X-Entry-URL: " + url + "\n\n";
+      "Message-ID: "  + handle.uri_o.href + "\n\n";
 
-    var filename = directory + url.replace(/\//g, "!");
-
+    var filename = directory + handle.uri_o.href.replace(/\//g, "!");
     var content  = header + result.content;
     
     if (!directory) {
@@ -83,9 +78,9 @@ new get(get_me).asString(function (err, str) {
       spawn('scp', [tmpfile, filename]).on('exit', function (code) {
 
         if (code == 0) {
-	  console.log("written (using scp) to " + filename + ".");
+					console.log("written (using scp) to " + filename + ".");
         } else {
-	  console.error("Error: could not write file!");
+					console.error("Error: could not write file!");
         }
 
         fs.unlink(tmpfile);      
