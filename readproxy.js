@@ -42,12 +42,10 @@ if (directory && directory[directory.length -1] != "/") {
   directory += "/";
 }
 
-var get_me = {uri: url,
-              headers: { 'Accept-encoding': 'none',
-                         'Connection': 'close',
-                         'User-Agent': 'Readproxy/0.1'}};
-
-handle = new get(get_me);
+handle = new get({uri: url,
+									headers: { 'Accept-encoding': 'none',
+														 'Connection': 'close',
+														 'User-Agent': 'Readproxy/0.1'}});
 
 handle.asString(function (err, str) {
   readability.parse(str, url, function(result) {
@@ -58,6 +56,7 @@ handle.asString(function (err, str) {
       "Subject: "     + result.title + "\n" +
       "From: "        + handle.uri_o.host + " <readproxy@localhost>\n" +
       "Date: "        + (new Date).toUTCString() + "\n" +
+      "X-Entry-URL: " + handle.uri_o.href + "\n";
       "Message-ID: "  + handle.uri_o.href + "\n\n";
 
     var filename = directory + handle.uri_o.href.replace(/\//g, "!");
